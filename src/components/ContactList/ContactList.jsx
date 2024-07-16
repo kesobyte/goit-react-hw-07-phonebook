@@ -1,35 +1,47 @@
-// import PropTypes from 'prop-types';
-import { ContactListItem } from 'components/ContactListItem/ContactListItem';
-import { useSelector } from 'react-redux';
-import { getContacts, getFilter } from '../../redux/selectors';
-
-const getFilteredContacts = (contacts, filter) => {
-  return contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
-};
+import { ContactListItem } from 'components/ContactList/ContactListItem/ContactListItem';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectFilteredContacts,
+  selectError,
+  selectIsLoading,
+} from '../../redux/contacts/contactsSelector';
+import { fetchContacts } from '../../redux/contacts/contactsOperation';
+import { Loader } from 'components/Loader/Loader';
 
 export const ContactList = () => {
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
+  const filteredContacts = useSelector(selectFilteredContacts);
+  const error = useSelector(selectError);
+  const isLoading = useSelector(selectIsLoading);
 
-  const filteredContacts = getFilteredContacts(contacts, filter);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <>
       <ul>
-        {filteredContacts.map(filteredContact => (
-          <ContactListItem
-            key={filteredContact.id}
-            filteredContact={filteredContact}
-          />
-        ))}
+        {/* If loading and not error, show Loader */}
+        {isLoading && !error && <Loader />}
+
+        {/* If not loading, not error, and filtered contacts is empty, show warning */}
+        {isLoading && !error && filteredContacts.length === 0 && (
+          <p>The phonebook is empty. Please add a contact.</p>
+        )}
+
+        {/* If not loading, not error and have atleast 1 fitlered contact, show ContactListItem component */}
+        {isLoading &&
+          !error &&
+          filteredContacts.length > 0 &&
+          filteredContacts.map(filteredContact => (
+            <ContactListItem
+              key={filteredContact.id}
+              filteredContact={filteredContact}
+            />
+          ))}
       </ul>
     </>
   );
 };
-
-// ContactList.propTypes = {
-//   filterContact: PropTypes.func.isRequired,
-//   deleteContact: PropTypes.func.isRequired,
-// };
