@@ -2,7 +2,7 @@ import { useState } from 'react';
 import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from '../../redux/contacts/contactsOperation';
-import { selectContacts } from '../../redux/contacts/contactsSelector';
+import { selectContacts } from '../../redux/selectors';
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ export const ContactForm = () => {
     }
 
     // dispatch(addContact({ name: name, number: number }));
-    dispatch(addContact(name, number));
+    dispatch(addContact({ name, number }));
 
     // Reset form
     setName('');

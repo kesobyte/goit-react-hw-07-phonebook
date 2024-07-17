@@ -1,9 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchContacts, addContact, deleteContact } from './contactsOperation';
 
+const initialState = {
+  items: [],
+  isLoading: false,
+  error: null,
+};
+
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: { items: [], isLoading: false, error: null },
+  initialState,
   // reducer was replaced by extraReducer to be used when using createAsyncThunk
   extraReducers: builder => {
     builder
@@ -18,6 +24,7 @@ const contactsSlice = createSlice({
       .addCase(fetchContacts.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
+        console.log(state.error);
       })
       // Case for addContact
       .addCase(addContact.pending, state => {
